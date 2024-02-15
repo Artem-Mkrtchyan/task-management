@@ -4,7 +4,8 @@ import { sequelize } from "./db.js";
 import cors from "cors";
 import routers from "./routes/index.js";
 import cookieParser from "cookie-parser";
-
+import { ApiError } from "./exteption/api-error.js";
+import { errorMiddleware } from "./middlewares/error-middleware.js";
 
 const PORT = process.env.PORT || 4000;
 const app: Express = express();
@@ -13,6 +14,7 @@ app.use(cookieParser());
 app.use(cors());
 app.use(json());
 app.use("/api", routers);
+app.use(errorMiddleware);
 
 app.get("/", (req, res) => {
     res.status(200).json({message: "it's OK"});
