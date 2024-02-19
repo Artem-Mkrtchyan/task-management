@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { HttpStatusCode } from "../utils/HttpStatusCode.js";
 
 export function errorMiddleware(error: unknown, request: Request, respose: Response, next: NextFunction) {
+    console.log(error);
 
     if (error instanceof ApiError) {
         return respose.status(error.status).json({ message: error.message, errors: error.errors });

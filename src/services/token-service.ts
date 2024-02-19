@@ -22,9 +22,15 @@ export class TokenService {
             return tokenData.save();
         }
 
-        const token = await Token.create({refreshToken, userId});
+        const token = await Token.create({ refreshToken, userId });
         return token;
     }
-}
 
-export default new TokenService();
+    async removeToken(refreshToken: string) {
+        return await Token.destroy({
+            where: {
+                refreshToken
+            }
+        });
+    }
+}

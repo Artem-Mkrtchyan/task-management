@@ -1,10 +1,11 @@
-import { BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { BelongsToMany, Column, DataType, HasMany, HasOne, Model, Table } from "sequelize-typescript";
 import { Role } from "./role.model.js";
 import { UserRoles } from "./user-roles.model.js";
 import { Board } from "./board.model.js";
 import { Project } from "./project.model.js";
 import { Task } from "./task.model.js";
 import { Comment } from "./comment.model.js";
+import { Token } from "./token.model.js";
 
 interface UserCreationAttrs {
     email: string;
@@ -31,6 +32,9 @@ export class User extends Model<User, UserCreationAttrs> {
 
     @BelongsToMany(() => Role, () => UserRoles)
     declare roles: Role[];
+
+    @HasOne(() => Token)
+    declare refreshToken: Token;
 
     @HasMany(() => Board)
     declare boards: Board[];

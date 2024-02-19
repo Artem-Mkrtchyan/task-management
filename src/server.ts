@@ -4,7 +4,6 @@ import { sequelize } from "./db.js";
 import cors from "cors";
 import routers from "./routes/index.js";
 import cookieParser from "cookie-parser";
-import { ApiError } from "./exteption/api-error.js";
 import { errorMiddleware } from "./middlewares/error-middleware.js";
 
 const PORT = process.env.PORT || 4000;
