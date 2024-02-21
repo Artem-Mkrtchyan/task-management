@@ -13,9 +13,10 @@ userRouter.post("/registration",
     }),
     userController.registration
 );
+
 userRouter.post("/login", userController.login);
 userRouter.get("/logout", userController.logout);
 userRouter.get("/activate/:link", userController.activate);
-userRouter.get("/id");
+userRouter.get("/refresh", userController.refresh);
 
 export default userRouter;

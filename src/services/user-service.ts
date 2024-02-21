@@ -29,9 +29,9 @@ export class UserServices {
     }
 
     async activate(activationLink: string) {
-        const user = await User.findOne({where: {activationLink}});
+        const user = await User.findOne({ where: { activationLink } });
 
-        if(!user){
+        if (!user) {
             throw ApiError.BadRequest("Некорректная ссылка активации");
         }
 
@@ -40,13 +40,13 @@ export class UserServices {
     }
 
     async login(email: string, password: string) {
-        const userData = await User.findOne({where: {email}});
-        if(!userData) {
+        const userData = await User.findOne({ where: { email } });
+        if (!userData) {
             throw ApiError.BadRequest("Пользователь с данной почтой не существует");
         }
 
         const checkPassword = await bcrypt.compare(password, userData.password);
-        if(!checkPassword) {
+        if (!checkPassword) {
             throw ApiError.BadRequest("Неверный пароль");
         }
 
@@ -57,11 +57,36 @@ export class UserServices {
         return await this.tokenService.removeToken(refreshToken);
     }
 
+    async refresh(refreshToken: string) {
+        if (!refreshToken) {
+            console.log("Отсутствует токен");
+            throw ApiError.UnauthtorizedError();
+        }
+
+        const userData = this.tokenService.validateRefreshToken(refreshToken);
+        const tokenFromDb = await this.tokenService.findToken(refreshToken);
+
+        if(!userData || !tokenFromDb) {
+            console.log("Скомпрометирован");
+            console.log(userData);
+            console.log(tokenFromDb);
+
+            throw ApiError.UnauthtorizedError();
+        }
+
+        const user = await User.findByPk(userData.id);
+        if(!user) {
+            throw ApiError.BadRequest("Пользователь с данной почтой не существует");
+        }
+
+        return await this.getTokens(user);
+    }
+
     private async getTokens(user: User) {
         const userDto = new UserDto(user);
-        const tokens = this.tokenService.generateToken({...userDto});
+        const tokens = this.tokenService.generateToken({ ...userDto });
         await this.tokenService.seveToken(userDto.id, tokens.refreshToken);
 
-        return {...tokens, user: userDto};
+        return { ...tokens, user: userDto };
     }
 }

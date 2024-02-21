@@ -13,6 +13,7 @@ export class UserController {
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
         this.activate = this.activate.bind(this);
+        this.refresh = this.refresh.bind(this);
     }
 
     async registration(req: Request, res: Response, next: NextFunction) {
@@ -57,7 +58,17 @@ export class UserController {
             const { refreshToken } = req.cookies;
             const token = await this.userService.logout(refreshToken);
             res.clearCookie("refreshToken");
-            console.log("Рефреш токен",token);
+            return res.json(token);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async refresh(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { refreshToken } = req.cookies;
+            const token = await this.userService.refresh(refreshToken);
+            this.setRefreshTokenFromCookie(res, token.refreshToken);
             return res.json(token);
         } catch (error) {
             next(error);
